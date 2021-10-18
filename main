@@ -1,0 +1,81 @@
+import telebot
+import random
+
+tovary_k = telebot.types.InlineKeyboardMarkup(row_width=1)
+
+token = '2085357641:AAGrDCouzEPM1VvSRZclvPJ7qHSVV-DMMnU'
+tovary = [{"name": "SPIRIT PRO HOODIE", "price": 5000, 'id': "hoodieid"},
+          {"name": "AUTHENTIC PRO JERSEY", "price": 3000, "id": "jerseydid"}]
+vse_id_tovarov = []
+bot = telebot.TeleBot(token)
+
+
+@bot.message_handler(func=lambda message: True)
+def start(message, tovary_k=None):
+    if message.text == '/shop':
+        try:
+            del tovary_k
+        except:
+            pass
+        tovary_k = telebot.types.InlineKeyboardMarkup(row_width=1)
+        for i in tovary:
+            tovary_k.add(
+                telebot.types.InlineKeyboardButton(text=f"{i['name']} - {i['price']} руб.", callback_data=i["id"]))
+            vse_id_tovarov.append(i["id"])
+        bot.send_message(message.chat.id, 'Выберите товар:', reply_markup=tovary_k)
+
+    elif message.text == "/start":
+        img = open('q.jpg', 'rb')
+        bot.send_photo(message.chat.id, img)
+        bot.send_message(message.from_user.id, "Попался, хулиган! Напиши /help чтобы узнать команды")
+    elif message.text == "/help":
+        bot.send_message(message.from_user.id,
+                         "Напиши /shop для выбора товара.\n /anecdot чтобы оценить крутой анекдот.")
+    elif message.text == '/anecdot':
+        bot.send_message(message.from_user.id, "Хочешь анекдот??");
+        bot.register_next_step_handler(message, get_anecdot);
+    elif message.text == '/an':
+        bot.send_message(message.from_user.id, "Уверен, что выдержишь?");
+        bot.register_next_step_handler(message, get_anecdot);
+
+    else:
+        bot.send_message(message.from_user.id, "Напиши /help для команд.")
+
+
+def get_anecdot(message):
+    global anecdot;
+    anecdot = message.text;
+    t = random.randint(1, 5)
+    if t == 1:
+        bot.send_message(message.from_user.id, 'Идут 2 ♂slave♂ один в ♂ latex gloves♂, другой тоже ♂ fisting♂ получит');
+    elif t == 2:
+        bot.send_message(message.from_user.id, '''Встречаются два ♂billy♂. Один ♂ billy♂ говорит другому:
+— Вчера встретил такого потрясающего ♂ slave♂ в ночном клубе.
+— Да, ты что!
+— Потом пригласил его к себе на чашку ♂cum♂.
+— Да, ну!
+— Когда мы вошли ко мне, он полностью разделся.
+— Ну, а дальше?!
+— А потом я посадил его на стол, где стоит ♂cum collection♂…
+— У тебя дома ♂cum collection♂?! А какой ♂dick♂?''');
+    elif t == 3:
+        bot.send_message(message.from_user.id,
+                         "Приходит парень в ♂gym♂ и говорит: — Я хочу служить в ♂ dungeon♂. — А ты хоть ♂ fisting♂-то умеешь? — А что, у вас ♂dick♂ нет?");
+    elif t == 4:
+        bot.send_message(message.from_user.id, "Нет лучше ♂dungeon♂, чем ♂ass♂ товарища @унь цынь сюнь");
+    elif t == 5:
+        bot.send_message(message.from_user.id,
+                         "Иду по улице, впереди идет ♂slave♂, оглядывается и ускоряет шаг, я решил тоже ускорится. ♂Slave♂побежал и я побежал, он заорал, и я заорал, он шмыгнул в ♂ dungeon♂, и я шмыгнул в ♂ dungeon♂. А от кого мы бежали?");
+    bot.send_message(message.from_user.id, 'Если хочешь ещё один анекдот введи /an');
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def menu(call):
+    if call.data in vse_id_tovarov:
+        for i in tovary:
+            if i["id"] == call.data:
+                bot.send_message(call.message.chat.id,
+                                 f'Вы выбрали {i["name"]} за {i["price"]} руб. Собираетесь заказать?')
+
+
+bot.polling(none_stop=True)
