@@ -75,7 +75,7 @@ def menu(call):
         for i in tovary:
             if i["id"] == call.data:
                 bot.send_message(call.message.chat.id,
-                                 f'Вы выбрали {i["name"]} за {i["price"]} руб. Собираетесь заказать. Для заказа обратитесь в личные сообщения @shiniq указав id товара - {i["id"]}')
+                                 f'Вы выбрали {i["name"]} за {i["price"]} руб. Собираетесь заказать. Для заказа обратитесь в личные сообщения @shini указав id товара - {i["id"]}')
 
 
 bot.polling(none_stop=True)
